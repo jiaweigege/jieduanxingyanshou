@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}课堂知识库{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  </head>
+  <body data-view="list">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">课堂知识库</span>
+        <a href="/materials">资料</a>
+        <a href="/solver">解题助手</a>
+        {% if config.AI_PLATFORM_ENABLED %}<a href="/apps">AI 应用</a>{% endif %}
+        <a href="/docs">API 文档</a>
+      </div>
+      <div class="topbar-actions" id="authenticated-actions" hidden>
+          <span class="user-chip" id="user-chip" hidden></span>
+          <button type="button" class="icon-button" id="theme-toggle" title="切换主题">◐</button>
+          <button type="button" class="icon-button" id="view-toggle" title="切换列表/网格">▦</button>
+          <button type="button" class="primary-button" id="open-command-palette">命令面板</button>
+          <button type="button" class="secondary-button" id="logout-button">退出登录</button>
+      </div>
+    </header>
+    <main class="page">
+      {% block content %}{% endblock %}
+    </main>
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/solver.js') }}"></script>
+  </body>
+</html>

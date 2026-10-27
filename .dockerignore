@@ -1,0 +1,13 @@
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+instance
+openspec
+tests
+.env
+.env.*
+.DS_Store
+*.db
+*.sqlite
+*.sqlite3

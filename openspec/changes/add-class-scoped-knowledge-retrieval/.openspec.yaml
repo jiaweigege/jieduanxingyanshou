@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-09-29
+goal: Enable authenticated class members to retrieve relevant knowledge entries
+  without crossing class boundaries, with verifiable source references.

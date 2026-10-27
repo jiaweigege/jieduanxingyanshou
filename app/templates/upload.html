@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}上传资料 · 课堂知识库{% endblock %}
+{% block content %}
+  <section class="upload-panel">
+    <h1>上传教学资料</h1>
+    <form method="post" enctype="multipart/form-data">
+      <label for="title">标题</label>
+      <input id="title" name="title" type="text" maxlength="200" required>
+
+      <label for="file">文件（.txt 或 .md）</label>
+      <input id="file" name="file" type="file" accept=".txt,.md" required>
+
+      <button type="submit" class="primary-button">上传</button>
+    </form>
+  </section>
+{% endblock %}

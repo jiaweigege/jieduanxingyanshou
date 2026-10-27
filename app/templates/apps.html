@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}AI 应用平台 · 课堂知识库{% endblock %}
+{% block content %}
+<div id="apps-root" hidden>
+  <header class="platform-heading"><div><p class="platform-kicker">CAMPUSCLAW / AI WORKSPACE</p><h1>AI 应用平台</h1><p>选择应用，连接资料与技能，查看每次回答的依据。</p></div><button id="apps-new" type="button" class="primary-button">新建会话</button></header>
+  <p id="apps-status" role="status" aria-live="polite"></p>
+  <div id="apps-catalog" class="platform-catalog"></div>
+  <div class="platform-layout">
+    <aside class="platform-panel"><h2>我的会话</h2><label for="apps-conversations">历史会话</label><select id="apps-conversations"><option value="">选择会话</option></select><h3>最近调用</h3><div id="apps-runs" class="platform-run-list"></div></aside>
+    <section class="platform-panel"><h2 id="apps-current">选择应用后开始</h2><p class="platform-muted">每条消息独立组装上下文，历史记录供查看。</p><div id="apps-history" class="platform-history" aria-live="polite"></div>
+      <form id="apps-message" autocomplete="off">
+        <div id="apps-variables"></div><label for="apps-active-skill">本次技能</label><select id="apps-active-skill"><option value="">让模型选择</option></select>
+        <label for="apps-key">个人智谱 API Key</label><input id="apps-key" type="password" autocomplete="off" required>
+        <label for="apps-question">你的问题</label><textarea id="apps-question" rows="3" maxlength="500" required placeholder="想了解什么？"></textarea>
+        <button id="apps-send" class="primary-button" type="submit">发送</button>
+      </form>
+    </section>
+  </div>
+  <section id="apps-management" class="platform-panel" hidden>
+    <h2>应用与资源管理</h2><p>配置保存在草稿中，发布后用于新消息。正在执行的消息继续使用开始时的版本。</p>
+    <div class="platform-management">
+      <details open><summary>应用配置</summary><form id="apps-config-form">
+        <label for="apps-edit-app">编辑应用</label><select id="apps-edit-app"></select>
+        <label for="apps-edit-model">模型</label><select id="apps-edit-model"></select>
+        <label for="apps-edit-template">提示词模板版本</label><select id="apps-edit-template"></select>
+        <label for="apps-edit-bases">知识库（可多选）</label><select id="apps-edit-bases" multiple size="3"></select>
+        <label for="apps-edit-skills">技能版本（可多选）</label><select id="apps-edit-skills" multiple size="3"></select>
+        <label for="apps-edit-tools">工具（可多选）</label><select id="apps-edit-tools" multiple size="3"></select>
+        <label for="apps-temperature">Temperature</label><input id="apps-temperature" type="number" step="0.1" min="0" max="2" value="0.1" required>
+        <label for="apps-max-tokens">最大输出 Tokens</label><input id="apps-max-tokens" type="number" min="1" max="8192" value="512" required>
+        <button class="secondary-button" type="submit">保存草稿</button><button id="apps-publish" class="primary-button" type="button">发布应用</button>
+      </form><form id="apps-create-form"><h3>创建应用</h3><label for="apps-create-name">名称</label><input id="apps-create-name" maxlength="120" required><label for="apps-create-slug">标识</label><input id="apps-create-slug" pattern="[a-z0-9-]+" required><label for="apps-create-kind">用途</label><select id="apps-create-kind"><option value="chat">通用对话</option><option value="knowledge">知识问答</option><option value="solver">解题引导</option></select><button class="secondary-button" type="submit">创建草稿</button></form></details>
+      <details><summary>提示词模板</summary><form id="apps-template-form">
+        <label for="apps-template-select">新建或更新</label><select id="apps-template-select"></select>
+        <label for="apps-template-name">模板名称</label><input id="apps-template-name" maxlength="120" required>
+        <label for="apps-template-body">内容（变量格式：{% raw %}{{topic}}{% endraw %}）</label><textarea id="apps-template-body" rows="5" maxlength="16000" required></textarea>
+        <label for="apps-template-vars">变量名，逗号分隔</label><input id="apps-template-vars" placeholder="topic, audience">
+        <button class="primary-button" type="submit">保存新版本</button>
+      </form></details>
+      <details><summary>知识库</summary><form id="apps-base-form">
+        <label for="apps-base-select">新建或编辑</label><select id="apps-base-select"></select>
+        <label for="apps-base-name">知识库名称</label><input id="apps-base-name" maxlength="120" required>
+        <label for="apps-base-materials">本班资料（可多选）</label><select id="apps-base-materials" multiple size="6"></select>
+        <button class="primary-button" type="submit">保存资料集合</button>
+      </form></details>
+      <details><summary>Skill 技能</summary><p>上传 SKILL.md 或包含 SKILL.md 与 references 文本的 ZIP。</p><form id="apps-skill-form"><label for="apps-skill-file">技能文件</label><input id="apps-skill-file" type="file" accept=".md,.zip" required><button class="primary-button" type="submit">上传技能版本</button></form><div id="apps-skill-list"></div></details>
+      <details><summary>外部工具与 MCP</summary><form id="apps-tool-form">
+        <label for="apps-tool-name">连接名称</label><input id="apps-tool-name" maxlength="120" required>
+        <label for="apps-tool-kind">接入方式</label><select id="apps-tool-kind"><option value="mcp">MCP · Streamable HTTP</option><option value="http">HTTP 工具</option></select>
+        <label for="apps-tool-url">HTTPS 地址</label><input id="apps-tool-url" type="url" placeholder="https://your-service.example/mcp" required>
+        <p id="apps-tool-hosts" class="platform-muted"></p><label for="apps-tool-credential">凭据引用</label><select id="apps-tool-credential"><option value="">无需凭据</option></select>
+        <div id="apps-http-fields" hidden><label for="apps-tool-method">HTTP 方法</label><select id="apps-tool-method"><option>POST</option><option>GET</option></select><label for="apps-tool-schema">工具定义（name、description、inputSchema）</label><textarea id="apps-tool-schema" rows="6">{"name":"lookup","description":"查询信息","inputSchema":{"type":"object","properties":{"query":{"type":"string"}},"required":["query"]}}</textarea></div>
+        <button class="primary-button" type="submit">保存并发现工具</button></form><div id="apps-tool-list"></div>
+      </details>
+    </div>
+  </section>
+</div>
+<dialog id="apps-trace-dialog" class="platform-trace-dialog"><header><h2>本次调用</h2><button id="apps-trace-close" class="secondary-button" type="button">关闭</button></header><p id="apps-trace-summary"></p><div id="apps-trace-content"></div><button id="apps-trace-export" class="secondary-button" type="button">导出脱敏 JSON</button><button id="apps-trace-delete" class="secondary-button" type="button">删除追踪</button></dialog>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/platform.css') }}">
+<script defer src="{{ url_for('static', filename='js/platform.js') }}"></script>
+{% endblock %}

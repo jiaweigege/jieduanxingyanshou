@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}解题助手 · 课堂知识库{% endblock %}
+{% block content %}
+<section class="solver-page" id="solver-page" hidden>
+  <h1>解题助手</h1>
+  <p>依据本班资料逐步引导，保留可核验的引用出处。</p>
+  <section id="solver-teacher" hidden>
+    <h2>解题引导技能</h2>
+    <label for="solver-skill-select">选择技能</label>
+    <select id="solver-skill-select"></select>
+    <form id="solver-skill-form">
+      <label for="solver-skill-name">技能名称</label>
+      <input id="solver-skill-name" maxlength="120" required>
+      <label for="solver-skill-prompt">教师提示词</label>
+      <textarea id="solver-skill-prompt" rows="6" maxlength="4000" required></textarea>
+      <p>系统会始终要求助手只给提示和下一步思路，不直接给最终答案。</p>
+      <button class="primary-button" type="submit">保存修改</button>
+      <button class="secondary-button" type="button" id="solver-skill-create">另建技能</button>
+    </form>
+  </section>
+  <section id="solver-student" hidden>
+    <label for="solver-student-skill">解题引导技能</label>
+    <select id="solver-student-skill"></select>
+    <button type="button" class="secondary-button" id="solver-new-session">新建会话</button>
+    <label for="solver-session-list">我的会话</label>
+    <select id="solver-session-list"></select>
+    <div id="solver-history" class="solver-history" aria-live="polite"></div>
+    <form id="solver-message-form" autocomplete="off">
+      <label for="solver-key">个人智谱 API Key</label>
+      <input type="password" id="solver-key" autocomplete="off" required>
+      <label for="solver-content">问题</label>
+      <textarea id="solver-content" rows="3" maxlength="500" required></textarea>
+      <button type="submit" class="primary-button" id="solver-send">发送并查看引导</button>
+    </form>
+  </section>
+  <p id="solver-status" role="status" aria-live="polite"></p>
+</section>
+<dialog id="material-dialog" class="material-dialog">
+  <article id="material-detail"></article>
+  <form method="dialog"><button class="secondary-button">关闭</button></form>
+</dialog>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}资料 · 课堂知识库{% endblock %}
+{% block content %}
+  <section class="materials-page" id="authenticated-content" hidden>
+    <div class="materials-toolbar">
+      <div class="search-box">
+        <input type="search" id="material-search" placeholder="搜索本班资料…" autocomplete="off">
+      </div>
+      <button type="button" class="primary-button" id="show-upload" hidden>上传资料</button>
+    </div>
+
+    <section class="upload-panel" id="upload-panel" hidden>
+        <h2>上传教学资料</h2>
+        <form id="upload-form">
+          <label for="upload-title">标题</label>
+          <input id="upload-title" name="title" type="text" maxlength="200" required>
+
+          <label for="upload-file">文件（.txt 或 .md）</label>
+          <input id="upload-file" name="file" type="file" accept=".txt,.md" required>
+
+          <div class="progress-track" id="upload-progress-track" hidden>
+            <div class="progress-bar" id="upload-progress-bar"></div>
+          </div>
+
+          <button type="submit" class="primary-button">上传</button>
+        </form>
+    </section>
+
+    <div class="knowledge-tabs" role="tablist" aria-label="知识功能">
+      <button
+        type="button"
+        id="knowledge-search-tab"
+        class="knowledge-tab active"
+        role="tab"
+        aria-selected="true"
+        aria-controls="knowledge-search-panel"
+      >知识检索</button>
+      <button
+        type="button"
+        id="knowledge-qa-tab"
+        class="knowledge-tab"
+        role="tab"
+        aria-selected="false"
+        aria-controls="knowledge-qa-panel"
+        tabindex="-1"
+      >知识问答</button>
+    </div>
+
+    <section
+      class="knowledge-search knowledge-panel"
+      id="knowledge-search-panel"
+      role="tabpanel"
+      aria-labelledby="knowledge-search-tab"
+    >
+      <h2 id="knowledge-search-heading">检索本班知识正文</h2>
+      <form id="knowledge-search-form" class="knowledge-search-form" role="search">
+        <label class="sr-only" for="knowledge-search-input">知识检索词</label>
+        <input
+          id="knowledge-search-input"
+          name="q"
+          type="search"
+          placeholder="输入正文中的关键词…"
+          autocomplete="off"
+          aria-describedby="knowledge-search-status"
+        >
+        <button type="submit" class="primary-button" id="knowledge-search-submit">检索正文</button>
+      </form>
+      <p
+        id="knowledge-search-status"
+        class="knowledge-search-status"
+        role="status"
+        aria-live="polite"
+        tabindex="-1"
+        data-class-name=""
+      ></p>
+      <div id="knowledge-search-results" class="knowledge-search-results"></div>
+    </section>
+
+    <section
+      class="knowledge-qa knowledge-panel"
+      id="knowledge-qa-panel"
+      role="tabpanel"
+      aria-labelledby="knowledge-qa-tab"
+      hidden
+    >
+      <h2>基于本班资料问答</h2>
+      <p class="knowledge-qa-notice">
+        问题、你的个人智谱 API Key 和最多 4 条本班资料片段会经本服务发送给智谱。
+        Key 只用于当前请求，不会保存；请仅在可信且使用 HTTPS 的部署环境中输入。
+      </p>
+      <form id="knowledge-qa-form" class="knowledge-qa-form" autocomplete="off">
+        <label for="knowledge-qa-key">个人智谱 API Key</label>
+        <input
+          id="knowledge-qa-key"
+          name="api_key"
+          type="password"
+          autocomplete="off"
+          spellcheck="false"
+          required
+          aria-describedby="knowledge-qa-key-hint"
+        >
+        <p id="knowledge-qa-key-hint" class="field-hint">刷新、退出或关闭页面后需要重新输入。</p>
+
+        <label for="knowledge-qa-question">问题</label>
+        <textarea
+          id="knowledge-qa-question"
+          name="question"
+          rows="3"
+          maxlength="500"
+          placeholder="例如：磁铁能吸木块吗？"
+          required
+          aria-describedby="knowledge-qa-status"
+        ></textarea>
+        <button type="submit" class="primary-button" id="knowledge-qa-submit">依据资料回答</button>
+      </form>
+      <p
+        id="knowledge-qa-status"
+        class="knowledge-search-status"
+        role="status"
+        aria-live="polite"
+        tabindex="-1"
+      ></p>
+      <div id="knowledge-qa-results" class="knowledge-qa-results"></div>
+    </section>
+
+    <section class="materials-container" id="materials-container" aria-live="polite"></section>
+  </section>
+
+  <dialog id="material-dialog" class="material-dialog">
+    <article id="material-detail" class="material-detail"></article>
+    <form method="dialog">
+      <button class="secondary-button">关闭</button>
+    </form>
+  </dialog>
+
+  <dialog id="command-palette" class="command-palette">
+    <input id="command-input" type="search" placeholder="搜索资料或命令…" autocomplete="off">
+    <div id="command-results" class="command-results"></div>
+    <p class="command-hint">↑↓ 选择 · Enter 确认 · Esc 关闭</p>
+  </dialog>
+{% endblock %}

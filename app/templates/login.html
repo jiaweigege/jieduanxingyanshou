@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}登录 · 课堂知识库{% endblock %}
+{% block content %}
+  <section class="login-card">
+    <h1>登录</h1>
+    {% if presets %}
+      <div class="login-presets" aria-label="本机演示账号">
+        <p>本机演示账号 · 点击自动填写</p>
+        {% for preset in presets %}
+          <button type="button" class="login-preset" data-username="{{ preset.username }}" data-password="{{ preset.password }}">{{ preset.label }}（{{ preset.username }}）</button>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <p id="login-error" class="flash error" role="alert" hidden></p>
+    <form id="login-form" class="login-form">
+      <label for="username">用户名</label>
+      <input id="username" name="username" type="text" autocomplete="username" required>
+
+      <label for="password">密码</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+      <button id="login-submit" type="submit" class="primary-button wide">登录</button>
+    </form>
+  </section>
+{% endblock %}

@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      TOKEN_SIGNING_KEY: ${TOKEN_SIGNING_KEY:?TOKEN_SIGNING_KEY is required}
+      TOKEN_ISSUER: ${TOKEN_ISSUER:-campusclaw}
+      TOKEN_AUDIENCE: ${TOKEN_AUDIENCE:-campusclaw-web}
+      ACCESS_TOKEN_TTL_SECONDS: ${ACCESS_TOKEN_TTL_SECONDS:-1800}
+      ZHIPU_API_URL: ${ZHIPU_API_URL:-https://open.bigmodel.cn/api/paas/v4/chat/completions}
+      ZHIPU_MODEL: ${ZHIPU_MODEL:-glm-4-flash}
+      ZHIPU_TIMEOUT_SECONDS: ${ZHIPU_TIMEOUT_SECONDS:-20}
+      KNOWLEDGE_QA_MAX_QUESTION_CHARS: ${KNOWLEDGE_QA_MAX_QUESTION_CHARS:-500}
+      KNOWLEDGE_QA_MAX_CONTEXT_CHARS: ${KNOWLEDGE_QA_MAX_CONTEXT_CHARS:-6000}
+      KNOWLEDGE_QA_MAX_OUTPUT_TOKENS: ${KNOWLEDGE_QA_MAX_OUTPUT_TOKENS:-512}
+      DATABASE_URL: sqlite:////instance/app.db
+      UPLOAD_FOLDER: /instance/uploads
+    volumes:
+      - sqlite_data:/instance
+      - uploads:/instance/uploads
+    ports:
+      - "${APP_PORT:-5000}:5000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  sqlite_data:
+  uploads:
